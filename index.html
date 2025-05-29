@@ -172,7 +172,7 @@
       probability.forEach(item => {
         const option = document.createElement('option');
         option.value = item.id;
-        option.textContent = `${item.name} (掉率: ${item.value})`;
+        option.textContent = item.name;
         relicSelect.appendChild(option);
       });
       partKeys.forEach(key => {
@@ -180,7 +180,7 @@
         probability.forEach(item => {
           const option = document.createElement('option');
           option.value = item.id;
-          option.textContent = `${item.name} (掉率 ${item.value})`;
+          option.textContent = item.name;
           select.appendChild(option);
         });
       });
