@@ -370,6 +370,7 @@
         row.style.display = (idx < n) ? '' : 'none';
       });
       window.currentWeaponParts = n;
+      setWeaponTypeDefaults(); // 每次切换都重置为"请选择"
       calcTotalWeapons();
     }
     document.getElementById('btn-3parts').onclick = () => setWeaponParts(3);
