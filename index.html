@@ -189,58 +189,22 @@
           <select id="weapon_drop_blueprint"></select>
         </div>
         <div class="input-row weapon-part-row weapon-part-row-1">
-          <select id="weapon_partA_type">
-            <option value="">请选择</option>
-            <option value="barrel">枪管</option>
-            <option value="receiver">机匣</option>
-            <option value="stock">枪托</option>
-            <option value="string">弓弦</option>
-            <option value="limb">上下臂</option>
-            <option value="handle">刀柄</option>
-            <option value="blade">刀刃</option>
-          </select>
+          <select id="weapon_partA_type"></select>
           <input type="number" id="weapon_partA" min="0" value="0" placeholder="已有数量">
           <select id="weapon_drop_partA"></select>
         </div>
         <div class="input-row weapon-part-row weapon-part-row-2">
-          <select id="weapon_partB_type">
-            <option value="">请选择</option>
-            <option value="barrel">枪管</option>
-            <option value="receiver">机匣</option>
-            <option value="stock">枪托</option>
-            <option value="string">弓弦</option>
-            <option value="limb">上下臂</option>
-            <option value="handle">刀柄</option>
-            <option value="blade">刀刃</option>
-          </select>
+          <select id="weapon_partB_type"></select>
           <input type="number" id="weapon_partB" min="0" value="0" placeholder="已有数量">
           <select id="weapon_drop_partB"></select>
         </div>
         <div class="input-row weapon-part-row weapon-part-row-4" style="display:none;">
-          <select id="weapon_partC_type">
-            <option value="">请选择</option>
-            <option value="barrel">枪管</option>
-            <option value="receiver">机匣</option>
-            <option value="stock">枪托</option>
-            <option value="string">弓弦</option>
-            <option value="limb">上下臂</option>
-            <option value="handle">刀柄</option>
-            <option value="blade">刀刃</option>
-          </select>
+          <select id="weapon_partC_type"></select>
           <input type="number" id="weapon_partC" min="0" value="0" placeholder="已有数量">
           <select id="weapon_drop_partC"></select>
         </div>
         <div class="input-row weapon-part-row weapon-part-row-5" style="display:none;">
-          <select id="weapon_partD_type">
-            <option value="">请选择</option>
-            <option value="barrel">枪管</option>
-            <option value="receiver">机匣</option>
-            <option value="stock">枪托</option>
-            <option value="string">弓弦</option>
-            <option value="limb">上下臂</option>
-            <option value="handle">刀柄</option>
-            <option value="blade">刀刃</option>
-          </select>
+          <select id="weapon_partD_type"></select>
           <input type="number" id="weapon_partD" min="0" value="0" placeholder="已有数量">
           <select id="weapon_drop_partD"></select>
         </div>
@@ -308,10 +272,25 @@
       receiver: '机匣',
       stock: '枪托',
       string: '弓弦',
-      limb: '上下臂',
+      grip: '弓身',
+      limbA: '上弓臂',
+      limbB: '下弓臂',
       handle: '刀柄',
       blade: '刀刃'
     };
+
+    const weaponPartTypes = [
+      { value: "", label: "请选择" },
+      { value: "barrel", label: "枪管" },
+      { value: "receiver", label: "机匣" },
+      { value: "stock", label: "枪托" },
+      { value: "string", label: "弓弦" },
+      { value: "grip", label: "弓身" },
+      { value: "limbA", label: "上弓臂" },
+      { value: "limbB", label: "下弓臂" },
+      { value: "handle", label: "刀柄" },
+      { value: "blade", label: "刀刃" }
+    ];
 
     function getDropInfo(id) {
       return probability.find(item => item.id === parseInt(id));
@@ -356,6 +335,19 @@
         }
       });
     }
+
+    // 在 weaponPartTypes 定义后添加此函数
+    function fillWeaponPartTypeSelect(id) {
+      const select = document.getElementById(id);
+      if (select) {
+        select.innerHTML = weaponPartTypes.map(
+          t => `<option value="${t.value}">${t.label}</option>`
+        ).join('');
+      }
+    }
+
+    // 初始化所有部件类型下拉框
+    ['weapon_partA_type', 'weapon_partB_type', 'weapon_partC_type', 'weapon_partD_type'].forEach(fillWeaponPartTypeSelect);
 
     // 切换3/4/5部件输入行
     function setWeaponParts(n) {
