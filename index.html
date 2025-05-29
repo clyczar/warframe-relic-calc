@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Warframe 核桃掉率与战甲计算器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #f0f0f0;
+      font-family: sans-serif;
+      min-height: 100vh;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1280px;
+      width: 100%;
+      padding: 20px;
+      margin: auto;
+    }
+
+    .section {
+      flex: 1;
+      min-width: 320px;
+      max-width: 600px;
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #000;
+    }
+
+    h2 {
+      color: #5ad;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+    }
+
+    input, select {
+      padding: 6px;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+
+    input {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    select {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+
+    .input-row input {
+      max-width: 100px;
+    }
+
+    .input-row select {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    #result1, #result2 {
+      margin-top: 20px;
+      font-weight: bold;
+      white-space: pre-wrap;
+      background-color: #222;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="section">
+      <h2>📦 功能 1：预计获得部件数</h2>
+      <label for="relic">请选择开核桃方式：</label>
+      <select id="relic"></select>
+      <label for="count">请输入计划开核桃的数量：</label>
+      <input type="number" id="count" min="0" value="0">
+      <div id="result1">🎯 预计获得部件数：--</div>
+    </div>
+    <div class="section">
+      <h2>🛠 功能 2：计算凑齐战甲所需核桃数量</h2>
+      <label>请输入想要的战甲总数：</label>
+      <input type="number" id="total" min="1" value="1">
+      <label>已有头部数：</label>
+      <div class="input-row">
+        <input type="number" id="head" min="0" value="0">
+        <select id="drop_neuroptics"></select>
+      </div>
+      <label>已有系统数：</label>
+      <div class="input-row">
+        <input type="number" id="system" min="0" value="0">
+        <select id="drop_systems"></select>
+      </div>
+      <label>已有机体数：</label>
+      <div class="input-row">
+        <input type="number" id="chassis" min="0" value="0">
+        <select id="drop_chassis"></select>
+      </div>
+      <label>已有蓝图数：</label>
+      <div class="input-row">
+        <input type="number" id="blueprint" min="0" value="0">
+        <select id="drop_blueprint"></select>
+      </div>
+      <div id="result2">💡 请输入数据</div>
+    </div>
+  </div>
+  <script>
+    const probability = [...Array(14).keys()].map((_, i) => ({
+      id: i + 1,
+      name: [
+        "光辉一波(金)", "光辉22轮(金)", "光辉22轮(银)", "无暇22轮(银)", "无暇一波(银)", "完整一波(铜)", "完整22轮(铜)",
+        "光辉一波(银)", "光辉22轮(铜)", "无暇一波(金)", "无暇一波(铜)", "无暇22轮(铜)", "完整一波(银)", "完整22轮(银)"
+      ][i],
+      value: [0.3439, 0.19, 0.36, 0.3111, 0.525417, 0.689126, 0.442439, 0.5904, 0.297253, 0.219251, 0.525417, 0.36, 0.372578, 0.2079][i],
+      half: [false, true, true, true, false, false, true, false, true, false, false, true, false, true][i]
+    }));
+
+    const partKeys = ['neuroptics', 'systems', 'chassis', 'blueprint'];
+    const partLabels = {
+      neuroptics: '头部',
+      systems: '系统',
+      chassis: '机体',
+      blueprint: '蓝图'
+    };
+
+    function getDropInfo(id) {
+      return probability.find(item => item.id === parseInt(id));
+    }
+
+    function initDropSelectors() {
+      const relicSelect = document.getElementById('relic');
+      probability.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = `${item.name} (掉率: ${item.value})`;
+        relicSelect.appendChild(option);
+      });
+      partKeys.forEach(key => {
+        const select = document.getElementById(`drop_${key}`);
+        probability.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = `${item.name} (掉率 ${item.value})`;
+          select.appendChild(option);
+        });
+      });
+    }
+
+    initDropSelectors();
+
+    function calcDropResult() {
+      const relic = getDropInfo(document.getElementById('relic').value);
+      const count = parseInt(document.getElementById('count').value);
+      const result1 = document.getElementById('result1');
+      if (!relic || isNaN(count)) {
+        result1.textContent = "❌ 无效输入";
+        return;
+      }
+      const effectiveCount = relic.half ? count * 2 : count;
+      const expected = Math.floor(effectiveCount * relic.value);
+      result1.textContent = `🎯 使用【${relic.name}】，掉率为 ${relic.value.toFixed(4)}，开 ${count} 个核桃
+👉 预计获得部件数约为：${expected} 个（向下取整）`;
+    }
+
+    document.getElementById('relic').addEventListener('change', calcDropResult);
+    document.getElementById('count').addEventListener('input', calcDropResult);
+    calcDropResult();
+
+    const ids = ['total', 'head', 'system', 'chassis', 'blueprint'];
+    ids.forEach(id => document.getElementById(id).addEventListener('input', calcTotalWalnuts));
+    partKeys.forEach(key => document.getElementById(`drop_${key}`).addEventListener('change', calcTotalWalnuts));
+
+    function calcTotalWalnuts() {
+      const total = parseInt(document.getElementById('total').value);
+      const current = {
+        neuroptics: parseInt(document.getElementById('head').value),
+        systems: parseInt(document.getElementById('system').value),
+        chassis: parseInt(document.getElementById('chassis').value),
+        blueprint: parseInt(document.getElementById('blueprint').value)
+      };
+      if (isNaN(total) || total <= 0) {
+        document.getElementById('result2').textContent = "❗ 请输入正确的战甲数量";
+        return;
+      }
+      let sum = 0;
+      let lines = `📊 目标：${total} 个战甲
+`;
+      for (const part in current) {
+        const have = current[part];
+        const relicId = document.getElementById(`drop_${part}`).value;
+        const info = getDropInfo(relicId);
+        const diff = total - have;
+        if (!info) continue;
+        if (diff > 0) {
+          const count = Math.ceil(diff / info.value);
+          const realCount = info.half ? Math.ceil(count / 2) : count;
+          lines += `🔧 ${partLabels[part]} 还需 ${diff} 个，方式：${info.name}，掉率 ${info.value.toFixed(4)}，预计需核桃 ${realCount} 个
+`;
+          sum += realCount;
+        } else if (diff === 0) {
+          lines += `✅ ${partLabels[part]} 数量刚好，无需获取
+`;
+        } else {
+          lines += `✅ ${partLabels[part]} 已多余 ${-diff} 个
+`;
+        }
+      }
+      lines += `
+🔔 总共预计需要核桃：${sum} 个`;
+      document.getElementById('result2').textContent = lines;
+    }
+
+    calcTotalWalnuts();
+  </script>
+</body>
+</html>
