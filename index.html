@@ -13,44 +13,38 @@
       font-family: sans-serif;
       min-height: 100vh;
     }
-
     body {
       display: flex;
       justify-content: center;
     }
-
     .container {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       justify-content: center;
-      max-width: 1280px;
+      max-width: 1500px;
       width: 100%;
       padding: 20px;
       margin: auto;
     }
-
     .section {
       flex: 1;
-      min-width: 320px;
+      min-width: 430px;
       max-width: 600px;
       background-color: #1a1a1a;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px #000;
     }
-
     h2 {
       color: #5ad;
       border-bottom: 1px solid #333;
       padding-bottom: 4px;
     }
-
     label {
       display: block;
       margin-top: 12px;
     }
-
     input, select {
       padding: 6px;
       background-color: #222;
@@ -59,17 +53,14 @@
       border-radius: 4px;
       margin-top: 5px;
     }
-
     input {
       width: 100%;
       max-width: 300px;
     }
-
     select {
       width: 100%;
       max-width: 300px;
     }
-
     .input-row {
       display: flex;
       align-items: center;
@@ -77,17 +68,14 @@
       flex-wrap: wrap;
       margin-top: 5px;
     }
-
     .input-row input {
       max-width: 100px;
     }
-
     .input-row select {
       flex: 1;
-      min-width: 150px;
+      min-width: 50px;
     }
-
-    #result1, #result2 {
+    #result1, #result2, #result3, #weapon_result2 {
       margin-top: 20px;
       font-weight: bold;
       white-space: pre-wrap;
@@ -96,45 +84,201 @@
       border-radius: 6px;
       border: 1px solid #444;
     }
+    .recommend-button {
+      margin-top: 16px;
+      padding: 10px 16px;
+      background-color: #5ad;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .recommend-button:hover {
+      background-color: #79d;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #333;
+      color: #5ad;
+    }
+    caption {
+      caption-side: top;
+      text-align: left;
+      padding-bottom: 8px;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    .note {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.8em;
+      font-weight: normal;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="section">
-      <h2>📦 功能 1：预计获得部件数</h2>
+      <h2>功能 1：预计获得部件数</h2>
       <label for="relic">请选择开核桃方式：</label>
       <select id="relic"></select>
       <label for="count">请输入计划开核桃的数量：</label>
       <input type="number" id="count" min="0" value="0">
       <div id="result1">🎯 预计获得部件数：--</div>
     </div>
+
     <div class="section">
-      <h2>🛠 功能 2：计算凑齐战甲所需核桃数量</h2>
-      <label>请输入想要的战甲总数：</label>
-      <input type="number" id="total" min="1" value="1">
-      <label>已有头部数：</label>
-      <div class="input-row">
-        <input type="number" id="head" min="0" value="0">
-        <select id="drop_neuroptics"></select>
+      <div id="warframe-section">
+        <h2>功能 2：计算战甲所需核桃数量</h2>
+        <div style="margin-bottom: 16px; margin-top: -20px;">
+          <button id="btn-warframe" class="recommend-button" style="margin-right:8px;background-color:#5ad;color:#000;">战甲</button>
+          <button id="btn-weapon" class="recommend-button" style="background-color:#222;color:#fff;">武器</button>
+        </div>
+        <label>请输入想要的战甲总数：</label>
+        <input type="number" id="total" min="1" value="1">
+        <div class="input-row">
+          <label>已有头部数：</label>
+          <input type="number" id="head" min="0" value="0">
+          <select id="drop_neuroptics"></select>
+        </div>
+        <div class="input-row">
+          <label>已有系统数：</label>
+          <input type="number" id="system" min="0" value="0">
+          <select id="drop_systems"></select>
+        </div>
+        <div class="input-row">
+          <label>已有机体数：</label>
+          <input type="number" id="chassis" min="0" value="0">
+          <select id="drop_chassis"></select>
+        </div>
+        <div class="input-row">
+          <label>已有蓝图数：</label>
+          <input type="number" id="blueprint" min="0" value="0">
+          <select id="drop_blueprint"></select>
+        </div>
+        <div id="result2">💡 请输入数据</div>
       </div>
-      <label>已有系统数：</label>
-      <div class="input-row">
-        <input type="number" id="system" min="0" value="0">
-        <select id="drop_systems"></select>
+      <div id="weapon-section" style="display:none;">
+        <h2>功能 2：计算武器所需核桃数量</h2>
+        <div style="margin-bottom: 16px;">
+          <button id="btn-warframe" class="recommend-button" style="margin-right:8px;background-color:#222;color:#fff;">战甲</button>
+          <button id="btn-weapon" class="recommend-button" style="background-color:#5ad;color:#000;">武器</button>
+        </div>
+        <div style="margin-bottom: 16px;" id="weapon-part-btn-group">
+          <button id="btn-3parts" class="recommend-button" style="margin-right:8px;background-color:#5ad;color:#000;">3部件</button>
+          <button id="btn-4parts" class="recommend-button" style="margin-right:8px;background-color:#222;color:#fff;">4部件</button>
+          <button id="btn-5parts" class="recommend-button" style="background-color:#222;color:#fff;">5部件</button>
+        </div>
+        <label>请输入想要的武器总数：</label>
+        <input type="number" id="weapon_total" min="1" value="1">
+        <div class="input-row weapon-part-row weapon-part-row-3">
+          <label>已有蓝图数：</label>
+          <input type="number" id="weapon_blueprint" min="0" value="0">
+          <select id="weapon_drop_blueprint"></select>
+        </div>
+        <div class="input-row weapon-part-row weapon-part-row-1">
+          <select id="weapon_partA_type">
+            <option value="">请选择</option>
+            <option value="barrel">枪管</option>
+            <option value="receiver">机匣</option>
+            <option value="stock">枪托</option>
+            <option value="string">弓弦</option>
+            <option value="limb">上下臂</option>
+            <option value="handle">刀柄</option>
+            <option value="blade">刀刃</option>
+          </select>
+          <input type="number" id="weapon_partA" min="0" value="0" placeholder="已有数量">
+          <select id="weapon_drop_partA"></select>
+        </div>
+        <div class="input-row weapon-part-row weapon-part-row-2">
+          <select id="weapon_partB_type">
+            <option value="">请选择</option>
+            <option value="barrel">枪管</option>
+            <option value="receiver">机匣</option>
+            <option value="stock">枪托</option>
+            <option value="string">弓弦</option>
+            <option value="limb">上下臂</option>
+            <option value="handle">刀柄</option>
+            <option value="blade">刀刃</option>
+          </select>
+          <input type="number" id="weapon_partB" min="0" value="0" placeholder="已有数量">
+          <select id="weapon_drop_partB"></select>
+        </div>
+        <div class="input-row weapon-part-row weapon-part-row-4" style="display:none;">
+          <select id="weapon_partC_type">
+            <option value="">请选择</option>
+            <option value="barrel">枪管</option>
+            <option value="receiver">机匣</option>
+            <option value="stock">枪托</option>
+            <option value="string">弓弦</option>
+            <option value="limb">上下臂</option>
+            <option value="handle">刀柄</option>
+            <option value="blade">刀刃</option>
+          </select>
+          <input type="number" id="weapon_partC" min="0" value="0" placeholder="已有数量">
+          <select id="weapon_drop_partC"></select>
+        </div>
+        <div class="input-row weapon-part-row weapon-part-row-5" style="display:none;">
+          <select id="weapon_partD_type">
+            <option value="">请选择</option>
+            <option value="barrel">枪管</option>
+            <option value="receiver">机匣</option>
+            <option value="stock">枪托</option>
+            <option value="string">弓弦</option>
+            <option value="limb">上下臂</option>
+            <option value="handle">刀柄</option>
+            <option value="blade">刀刃</option>
+          </select>
+          <input type="number" id="weapon_partD" min="0" value="0" placeholder="已有数量">
+          <select id="weapon_drop_partD"></select>
+        </div>
+        <div id="weapon_result2">💡 请输入数据</div>
       </div>
-      <label>已有机体数：</label>
-      <div class="input-row">
-        <input type="number" id="chassis" min="0" value="0">
-        <select id="drop_chassis"></select>
-      </div>
-      <label>已有蓝图数：</label>
-      <div class="input-row">
-        <input type="number" id="blueprint" min="0" value="0">
-        <select id="drop_blueprint"></select>
-      </div>
-      <div id="result2">💡 请输入数据</div>
+    </div>
+
+    <div class="section">
+      <h2>功能 3：根据部件位置推荐最优开核方式</h2>
+      <label>选择头部位置：</label>
+      <select id="pos_neuroptics">
+        <option value="gold">金</option>
+        <option value="silver">银</option>
+        <option value="bronze">铜</option>
+      </select>
+      <label>选择系统位置：</label>
+      <select id="pos_systems">
+        <option value="gold">金</option>
+        <option value="silver">银</option>
+        <option value="bronze">铜</option>
+      </select>
+      <label>选择机体位置：</label>
+      <select id="pos_chassis">
+        <option value="gold">金</option>
+        <option value="silver">银</option>
+        <option value="bronze">铜</option>
+      </select>
+      <label>选择蓝图位置：</label>
+      <select id="pos_blueprint">
+        <option value="gold">金</option>
+        <option value="silver">银</option>
+        <option value="bronze">铜</option>
+      </select>
+      <button class="recommend-button" onclick="recommendBest()">🔍 推荐最佳方式</button>
+      <div id="result3">🧪 请选择位置并点击推荐</div>
     </div>
   </div>
+
   <script>
     const probability = [
       { id: 1, name: "光辉一波(金)", value: 0.3439, half: false },
@@ -154,17 +298,30 @@
       { id: 15, name: "光辉一波(铜)", value: 0.517824, half: false }
     ];
 
-
     const partKeys = ['neuroptics', 'systems', 'chassis', 'blueprint'];
     const partLabels = {
       neuroptics: '头部',
       systems: '系统',
       chassis: '机体',
-      blueprint: '蓝图'
+      blueprint: '蓝图',
+      barrel: '枪管',
+      receiver: '机匣',
+      stock: '枪托',
+      string: '弓弦',
+      limb: '上下臂',
+      handle: '刀柄',
+      blade: '刀刃'
     };
 
     function getDropInfo(id) {
       return probability.find(item => item.id === parseInt(id));
+    }
+
+    function getPosition(name) {
+      if (name.includes('金')) return 'gold';
+      if (name.includes('银')) return 'silver';
+      if (name.includes('铜')) return 'bronze';
+      return '';
     }
 
     function initDropSelectors() {
@@ -186,7 +343,126 @@
       });
     }
 
-    initDropSelectors();
+    function initWeaponDropSelectors() {
+      ['partA', 'partB', 'partC', 'partD', 'blueprint'].forEach(key => {
+        const select = document.getElementById(`weapon_drop_${key}`);
+        if (select) {
+          probability.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            select.appendChild(option);
+          });
+        }
+      });
+    }
+
+    // 切换3/4/5部件输入行
+    function setWeaponParts(n) {
+      [3,4,5].forEach(i => {
+        const btn = document.getElementById(`btn-${i}parts`);
+        if (btn) {
+          btn.style.backgroundColor = (i === n) ? '#5ad' : '#222';
+          btn.style.color = (i === n) ? '#000' : '#fff';
+        }
+      });
+      document.querySelectorAll('.weapon-part-row').forEach((row, idx) => {
+        row.style.display = (idx < n) ? '' : 'none';
+      });
+      window.currentWeaponParts = n;
+      calcTotalWeapons();
+    }
+    document.getElementById('btn-3parts').onclick = () => setWeaponParts(3);
+    document.getElementById('btn-4parts').onclick = () => setWeaponParts(4);
+    document.getElementById('btn-5parts').onclick = () => setWeaponParts(5);
+    setWeaponParts(3); // 默认3部件
+
+    // 计算逻辑，自动适配部件数量
+    function calcTotalWeapons() {
+      const total = parseInt(document.getElementById('weapon_total').value);
+      const n = window.currentWeaponParts || 3;
+      const partTypes = [];
+      const current = {};
+      const dropIds = {};
+      // 读取部件类型和数量
+      if (n >= 1) {
+        const typeA = document.getElementById('weapon_partA_type').value;
+        partTypes.push(typeA);
+        current[typeA] = parseInt(document.getElementById('weapon_partA').value);
+        dropIds[typeA] = document.getElementById('weapon_drop_partA').value;
+      }
+      if (n >= 2) {
+        const typeB = document.getElementById('weapon_partB_type').value;
+        partTypes.push(typeB);
+        current[typeB] = parseInt(document.getElementById('weapon_partB').value);
+        dropIds[typeB] = document.getElementById('weapon_drop_partB').value;
+      }
+      if (n >= 4) {
+        const typeC = document.getElementById('weapon_partC_type').value;
+        partTypes.push(typeC);
+        current[typeC] = parseInt(document.getElementById('weapon_partC').value);
+        dropIds[typeC] = document.getElementById('weapon_drop_partC').value;
+      }
+      if (n >= 5) {
+        const typeD = document.getElementById('weapon_partD_type').value;
+        partTypes.push(typeD);
+        current[typeD] = parseInt(document.getElementById('weapon_partD').value);
+        dropIds[typeD] = document.getElementById('weapon_drop_partD').value;
+      }
+      // 蓝图
+      current['blueprint'] = parseInt(document.getElementById('weapon_blueprint').value);
+      dropIds['blueprint'] = document.getElementById('weapon_drop_blueprint').value;
+
+      if (isNaN(total) || total <= 0) {
+        document.getElementById('weapon_result2').textContent = "❗ 请输入正确的武器数量";
+        return;
+      }
+      let sum = 0;
+      let rows = '';
+      // 计算每个部件
+      [...partTypes, 'blueprint'].forEach(part => {
+        const have = current[part];
+        const relicId = dropIds[part];
+        const info = getDropInfo(relicId);
+        const diff = total - have;
+        let result = '';
+        let realCount = 0;
+        if (!info) return;
+        if (diff > 0) {
+          const count = Math.ceil(diff / info.value);
+          realCount = info.half ? Math.ceil(count / 2) : count;
+          result = `还需 ${diff} 个`;
+          sum += realCount;
+        } else if (diff === 0) {
+          result = `✅ 数量刚好`;
+        } else {
+          result = `已多余 ${-diff} 个`;
+        }
+        rows += `<tr>
+          <td>${partLabels[part] || part}</td>
+          <td>${have}</td>
+          <td>${info.name}</td>
+          <td>${result}</td>
+          <td>${realCount > 0 ? realCount : '-'}</td>
+        </tr>`;
+      });
+      rows += `<tr>
+        <td colspan="4">🔔 总共预计需要核桃</td>
+        <td>${sum}</td>
+      </tr>`;
+      const table = `
+        <table>
+          <caption>📈 武器部件获取表</caption>
+          <thead>
+            <tr>
+              <th>部件</th><th>已有</th><th>方式</th><th>还需部件</th><th>还需核桃</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      document.getElementById('weapon_result2').innerHTML = table.trim();
+    }
 
     function calcDropResult() {
       const relic = getDropInfo(document.getElementById('relic').value);
@@ -198,17 +474,8 @@
       }
       const effectiveCount = relic.half ? count * 2 : count;
       const expected = Math.floor(effectiveCount * relic.value);
-      result1.textContent = `🎯 使用【${relic.name}】，掉率为 ${relic.value.toFixed(4)}，开 ${count} 个核桃
-👉 预计获得部件数约为：${expected} 个（向下取整）`;
+      result1.textContent = `🎯 使用【${relic.name}】，开 ${count} 个核桃 👉 预计获得部件数约为：${expected} 个`;
     }
-
-    document.getElementById('relic').addEventListener('change', calcDropResult);
-    document.getElementById('count').addEventListener('input', calcDropResult);
-    calcDropResult();
-
-    const ids = ['total', 'head', 'system', 'chassis', 'blueprint'];
-    ids.forEach(id => document.getElementById(id).addEventListener('input', calcTotalWalnuts));
-    partKeys.forEach(key => document.getElementById(`drop_${key}`).addEventListener('change', calcTotalWalnuts));
 
     function calcTotalWalnuts() {
       const total = parseInt(document.getElementById('total').value);
@@ -223,34 +490,192 @@
         return;
       }
       let sum = 0;
-      let lines = `📊 目标：${total} 个战甲
-`;
+      let rows = '';
       for (const part in current) {
         const have = current[part];
         const relicId = document.getElementById(`drop_${part}`).value;
         const info = getDropInfo(relicId);
         const diff = total - have;
+        let result = '';
+        let realCount = 0;
         if (!info) continue;
         if (diff > 0) {
           const count = Math.ceil(diff / info.value);
-          const realCount = info.half ? Math.ceil(count / 2) : count;
-          lines += `🔧 ${partLabels[part]} 还需 ${diff} 个，方式：${info.name}，掉率 ${info.value.toFixed(4)}，预计需核桃 ${realCount} 个
-`;
+          realCount = info.half ? Math.ceil(count / 2) : count;
+          result = `还需 ${diff} 个`;
           sum += realCount;
         } else if (diff === 0) {
-          lines += `✅ ${partLabels[part]} 数量刚好，无需获取
-`;
+          result = `✅ 数量刚好`;
         } else {
-          lines += `✅ ${partLabels[part]} 已多余 ${-diff} 个
-`;
+          result = `已多余 ${-diff} 个`;
         }
+        rows += `<tr>
+          <td>${partLabels[part]}</td>
+          <td>${have}</td>
+          <td>${info.name}</td>
+          <td>${result}</td>
+          <td>${realCount > 0 ? realCount : '0'}个</td>
+        </tr>`;
       }
-      lines += `
-🔔 总共预计需要核桃：${sum} 个`;
-      document.getElementById('result2').textContent = lines;
+      rows += `<tr>
+        <td colspan="4">🔔 总共预计需要核桃</td>
+        <td>${sum}</td>
+      </tr>`;
+      const table = `
+        <table>
+          <caption>📈 战甲部件获取表</caption>
+          <thead>
+            <tr>
+              <th>部件</th><th>已有</th><th>方式</th><th>还需部件</th><th>还需核桃</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      document.getElementById('result2').innerHTML = table.trim();
     }
 
+    function recommendBest() {
+      let totalWalnuts = 0;
+      let rows = '';
+
+      for (const part of partKeys) {
+        const pos = document.getElementById(`pos_${part}`).value;
+        const candidates = probability.filter(p => getPosition(p.name) === pos);
+        if (candidates.length === 0) continue;
+
+        const best = candidates.reduce((a, b) => a.value > b.value ? a : b);
+        const dropRate = best.value;
+        const isHalf = best.half;
+        const needed = isHalf ? Math.ceil(1 / dropRate / 2) : Math.ceil(1 / dropRate);
+        totalWalnuts += needed;
+
+        rows += `<tr>
+          <td>${partLabels[part]}</td>
+          <td>${pos}</td>
+          <td>${best.name}</td>
+          <td>${needed}</td>
+        </tr>`;
+      }
+      rows += 
+      `<tr>
+        <td colspan="4">🔔 一套总共预计需要核桃：${totalWalnuts} 个</td>
+      </tr>`;
+      const table = `
+        <table>
+          <caption>📈 推荐结果表格</caption>
+          <thead>
+            <tr>
+              <th>部件</th><th>位置</th><th>推荐方式</th><th>预计核桃数</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        
+      `;
+
+
+      document.getElementById('result3').innerHTML = table.trim();
+    }
+
+    function updateWeaponPartTypeOptions() {
+      // 获取所有部件类型下拉框
+      const selects = [
+        document.getElementById('weapon_partA_type'),
+        document.getElementById('weapon_partB_type'),
+        document.getElementById('weapon_partC_type'),
+        document.getElementById('weapon_partD_type')
+      ].filter(Boolean);
+
+      // 收集已选中的值
+      const selected = selects.map(sel => sel.value);
+
+      // 遍历每个下拉框
+      selects.forEach((sel, idx) => {
+        Array.from(sel.options).forEach(opt => {
+          // 只要该选项被其他下拉框选中，则禁用
+          if (selected.includes(opt.value) && sel.value !== opt.value) {
+            opt.disabled = true;
+          } else {
+            opt.disabled = false;
+          }
+        });
+      });
+    }
+
+    // 绑定事件
+    ['weapon_partA_type', 'weapon_partB_type', 'weapon_partC_type', 'weapon_partD_type'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', updateWeaponPartTypeOptions);
+    });
+
+    // 设置四个部件类型下拉框默认值互不相同
+    function setWeaponTypeDefaults() {
+      ['weapon_partA_type', 'weapon_partB_type', 'weapon_partC_type', 'weapon_partD_type'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = ""; // 全部默认选“请选择”
+      });
+      updateWeaponPartTypeOptions();
+    }
+    setWeaponTypeDefaults();
+
+    initDropSelectors();
+    document.getElementById('relic').addEventListener('change', calcDropResult);
+    document.getElementById('count').addEventListener('input', calcDropResult);
+    calcDropResult();
+
+    const ids = ['total', 'head', 'system', 'chassis', 'blueprint'];
+    ids.forEach(id => document.getElementById(id).addEventListener('input', calcTotalWalnuts));
+    partKeys.forEach(key => document.getElementById(`drop_${key}`).addEventListener('change', calcTotalWalnuts));
     calcTotalWalnuts();
+
+    initWeaponDropSelectors();
+    [
+      'weapon_total',
+      'weapon_partA',
+      'weapon_partB',
+      'weapon_partC',
+      'weapon_partD',
+      'weapon_blueprint',
+      'weapon_partA_type',
+      'weapon_partB_type',
+      'weapon_partC_type',
+      'weapon_partD_type'
+    ].forEach(id =>
+      document.getElementById(id) && document.getElementById(id).addEventListener('input', calcTotalWeapons)
+    );
+    ['partA', 'partB', 'blueprint'].forEach(key =>
+      document.getElementById(`weapon_drop_${key}`).addEventListener('change', calcTotalWeapons)
+    );
+    calcTotalWeapons();
+
+    // Toggle logic for 战甲/武器
+    function setWarframeMode() {
+      document.getElementById('warframe-section').style.display = '';
+      document.getElementById('weapon-section').style.display = 'none';
+      document.querySelectorAll('#btn-warframe').forEach(btn => {
+        btn.style.backgroundColor = '#5ad';
+        btn.style.color = '#000';
+      });
+      document.querySelectorAll('#btn-weapon').forEach(btn => {
+        btn.style.backgroundColor = '#222';
+        btn.style.color = '#fff';
+      });
+    }
+    function setWeaponMode() {
+      document.getElementById('warframe-section').style.display = 'none';
+      document.getElementById('weapon-section').style.display = '';
+      document.querySelectorAll('#btn-warframe').forEach(btn => {
+        btn.style.backgroundColor = '#222';
+        btn.style.color = '#fff';
+      });
+      document.querySelectorAll('#btn-weapon').forEach(btn => {
+        btn.style.backgroundColor = '#5ad';
+        btn.style.color = '#000';
+      });
+    }
+    document.querySelectorAll('#btn-warframe').forEach(btn => btn.onclick = setWarframeMode);
+    document.querySelectorAll('#btn-weapon').forEach(btn => btn.onclick = setWeaponMode);
   </script>
 </body>
 </html>
